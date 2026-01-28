@@ -268,9 +268,13 @@ export default function Home() {
               ))}
             </div>
           
+         )}
+        </div>
+      </div>
+
 
       {/* --- AREA ARTIKEL SEO (MULAI) --- */}
-      <div className="article-plain" style={{ marginTop: '50px', marginBottom: '50px' }}>
+      <div className="article-plain">
 
         <h2>The Ultimate Guide to 10 Minute Mail and Digital Privacy</h2>
         <p>
@@ -323,10 +327,6 @@ export default function Home() {
 
       </div>
       {/* --- AREA ARTIKEL SEO (SELESAI) --- */}
-
-)}
-        </div>
-      </div>
 
 
       {/* POPUP FULLSCREEN */}
