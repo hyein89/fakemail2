@@ -11,7 +11,7 @@ export default function Footer() {
         <div className="footer-bottom clearfix">
           <div className="copyright">
             Copyright Moaktmail Service<br/>
-            <small>{CONFIG.siteName}</small>
+            <small>www.{CONFIG.dom}</small>
           </div>
           <div className="socials">
             <i className="fa fa-facebook-official"></i>
