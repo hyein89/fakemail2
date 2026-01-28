@@ -21,7 +21,7 @@ export const CONFIG = {
 
   // --- GAMBAR SHARE (WA/FB/Twitter) ---
   // Pastikan kamu upload gambar bernama 'og-image.jpg' ke folder 'public'
-  ogImage: "/og-image.jpg", 
+  ogImage: "/1og-image.jpg", 
   
   // --- DAFTAR DOMAIN EMAIL ---
   allowedDomains: [
