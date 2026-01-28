@@ -1,12 +1,11 @@
 import { createClient } from '@supabase/supabase-js';
 import { NextResponse } from 'next/server';
 
-// --- EDIT DOMAIN KAMU DISINI ---
-const ALLOWED_DOMAINS = [
-  "suaranesianew.eu.org",
-  "domain-kamu-2.xyz",
-  "contoh.net"
-];
+// --- KODE BARU (PASTE INI SEBAGAI GANTINYA) ---
+import { CONFIG } from '../../config'; 
+
+const ALLOWED_DOMAINS = CONFIG.allowedDomains; 
+
 
 export async function POST(request) {
   // Setup koneksi database
