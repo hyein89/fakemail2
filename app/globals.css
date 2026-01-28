@@ -425,4 +425,71 @@
     text-overflow: ellipsis; /* Kuncinya disini: jadi 'suaranesi...' */
 }
 
+   
+   ARTIKEL RAPI (FIX JARAK)
+   ======================================= */
+.article-plain {
     
+    width: 100%;
+    margin: 40px auto;        /* Jarak dari atas dikurangi biar ga kejauhan */
+    padding: 0 20px 50px;
+    font-family: 'Open Sans', sans-serif;
+    color: #333;              /* Warna teks lebih gelap sedikit biar jelas */
+    background: transparent;
+}
+
+/* JUDUL SUB-BAB */
+.article-plain h2 {
+    font-size: 20px;          /* Ukuran pas untuk HP */
+    font-weight: 800;
+    color: #111;
+    margin-top: 30px;         /* Jarak judul ke atas dirapatkan */
+    margin-bottom: 10px;      /* Jarak judul ke teks dirapatkan */
+    line-height: 1.2;
+    text-transform: uppercase;
+}
+
+/* PARAGRAF - PERBAIKAN UTAMA */
+.article-plain p {
+    font-size: 15px;          /* Ukuran standar */
+    line-height: 1.6;         /* Jarak antar baris dirapatkan (sebelumnya 1.9) */
+    margin-bottom: 15px;      /* Jarak antar paragraf dirapatkan (sebelumnya 30px) */
+    text-align: left;         /* FIX: Rata Kiri biar spasi kata tidak bolong-bolong */
+    color: #555;
+}
+
+/* TEKS TEBAL */
+.article-plain strong {
+    color: #000;
+    font-weight: 700;
+}
+
+/* KHUSUS LAYAR HP */
+@media (max-width: 480px) {
+    .article-plain { padding: 0 15px 30px; } /* Padding samping pas */
+    .article-plain h2 { font-size: 18px; margin-top: 25px; }
+    .article-plain p { 
+        font-size: 14px; 
+        text-align: left; /* Pastikan di HP rata kiri */
+        word-spacing: normal; /* Normalisasi jarak kata */
+    }
+}
+   @media (min-width: 576px) { .article-plain { max-width: 540px; } }
+    @media (min-width: 768px) { .article-plain { max-width: 720px; } }
+    @media (min-width: 992px) { .article-plain { max-width: 800px; } } 
+    
+    /* JUDUL SUB-BAB (DENGAN GARIS BAWAH HIJAU) */
+.article-plain h2 {
+    font-size: 20px;
+    font-weight: 800;
+    color: #111;
+    margin-top: 35px;     /* Jarak atas sedikit diperlebar */
+    margin-bottom: 20px;  /* Jarak bawah ke paragraf */
+    line-height: 1.2;
+    text-transform: uppercase;
+    
+    /* --- TAMBAHAN GARIS BAWAH --- */
+    border-bottom: 3px solid #5cb85c; /* Garis hijau 3px, Warna SAMA dengan Header */
+    padding-bottom: 10px; /* Jarak antara teks judul dan garis */
+    /* --------------------------- */
+}
