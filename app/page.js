@@ -1,5 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
+import { CONFIG } from './config'; // <--- TAMBAHKAN INI DI PALING ATAS
 
 // --- FUNGSI DECODER CANGGIH (Sama seperti sebelumnya) ---
 const processEmailContent = (rawText) => {
@@ -266,7 +267,10 @@ export default function Home() {
                 </div>
               ))}
             </div>
-          
+          )}
+        </div>
+      </div>
+
 
       {/* --- AREA ARTIKEL SEO (MULAI) --- */}
       <div className="article-plain" style={{ marginTop: '50px', marginBottom: '50px' }}>
@@ -322,9 +326,7 @@ export default function Home() {
 
       </div>
       {/* --- AREA ARTIKEL SEO (SELESAI) --- */}
-)}
-        </div>
-      </div>
+
 
 
       {/* POPUP FULLSCREEN */}
