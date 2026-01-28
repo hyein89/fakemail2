@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server';
 
 // --- EDIT DOMAIN KAMU DISINI ---
 const ALLOWED_DOMAINS = [
-  "domain-kamu-1.com",
+  "suaranesianew.eu.org",
   "domain-kamu-2.xyz",
   "contoh.net"
 ];
