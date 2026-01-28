@@ -2,7 +2,7 @@
 
 export const CONFIG = {
   // --- IDENTITAS SITUS ---
-  siteName: "FakeMail Pro",
+  siteName: "EU.ORG F-EMail",
   domainUrl: "https://www.suaranesianew.eu.org", 
   dom: "suaranesianew.eu.org", 
   description: "Free temporary email service. Get a disposable email address instantly to protect your privacy and avoid spam. Fast, secure, and anonymous.",
