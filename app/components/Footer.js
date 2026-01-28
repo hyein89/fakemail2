@@ -1,5 +1,5 @@
 'use client';
-
+import { CONFIG } from '../config';
 export default function Footer() {
   return (
     <footer className="footer">
@@ -11,7 +11,7 @@ export default function Footer() {
         <div className="footer-bottom clearfix">
           <div className="copyright">
             Copyright Moaktmail Service<br/>
-            <small>www.moakt.com</small>
+            <small>{CONFIG.siteName}</small>
           </div>
           <div className="socials">
             <i className="fa fa-facebook-official"></i>
