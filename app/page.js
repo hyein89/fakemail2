@@ -131,7 +131,7 @@ export default function Home() {
         
       <div className="hero-text">
         <h1>Your 10 Minute Mail address</h1>
-        <p>Forget about spam. Keep your real inbox clean and secure.</p>
+        <p>Instantly generate a disposable 10 Minute Mail that self-destructed just after ten minutes. Keep your real email address private and your inbox clean from unwanted messages and spam.</p>
       </div>
 
       <div className="control-panel">
