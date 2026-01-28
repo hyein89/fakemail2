@@ -374,5 +374,55 @@
         .footer-top a { display: block; margin: 10px 0; margin-left: 0; }
         .footer-bottom { flex-direction: column; text-align: center; gap: 10px; }
     }
+    /* --- PERBAIKAN TAMPILAN MOBILE (Supaya text panjang otomatis jadi ...) --- */
+
+/* 1. Perbaiki Tampilan Input Utama (Yang Hijau) */
+.email-wrap {
+    display: flex; /* Pastikan dia baris yang fleksibel */
+    flex-wrap: nowrap; /* Jangan sampai turun baris */
+    width: 100%;
+    max-width: 100%;
+}
+
+.email-input {
+    flex: 1;       /* Biar dia ngisi sisa ruang */
+    min-width: 0;  /* WAJIB: Biar dia mau mengalah/mengecil di layar sempit */
     
+    /* Efek titik-titik (...) */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* 2. Perbaiki Bagian Edit (Dropdown Domain) */
+.merged-group {
+    display: flex;
+    flex-wrap: nowrap; /* Pastikan satu baris */
+    width: 100%;
+}
+
+.inp-user {
+    flex: 1;         /* Input nama ambil sisa ruang yang ada */
+    min-width: 50px; /* Jaga-jaga biar gak kepencet sampe ilang */
+}
+
+.dd-trigger {
+    /* Batasi lebar maksimal domain. Sesuaikan angka ini kalau kurang pas */
+    max-width: 130px; 
+    
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-right: 5px; /* Sedikit jarak buat panah */
+}
+
+/* Potong teks domain di dalam tombol */
+.dd-trigger span#txtDom {
+    display: inline-block;
+    max-width: 90px; /* Sisa ruang buat ikon panah */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis; /* Kuncinya disini: jadi 'suaranesi...' */
+}
+
     
