@@ -66,10 +66,10 @@ export default function NotFound() {
         404
       </h1>
       <h3 style={{ margin: '10px 0 20px 0', color: '#666' }}>
-        Oops! Halaman Tersesat.
+        Oops! Lost Page.
       </h3>
       <p style={{ color: '#888', maxWidth: '400px', margin: '0 auto 30px auto' }}>
-        Sepertinya halaman yang kamu cari sudah kadaluarsa atau terhapus, sama seperti email sementara kami.
+        It looks like the page you''re looking for has expired or been deleted, just like our temporary email.
       </p>
 
       {/* --- TOMBOL BALIK --- */}
@@ -87,7 +87,7 @@ export default function NotFound() {
           transition: '0.3s'
         }}>
           <i className="fa fa-arrow-left" style={{ marginRight: '8px' }}></i>
-          KEMBALI KE HOME
+          BACK TO HOME
         </button>
       </Link>
 
