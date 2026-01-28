@@ -1,0 +1,378 @@
+/* =========================================
+       1. PERFORMANCE & GLOBAL RESET
+       ========================================= */
+    :root {
+        --primary: #5cb85c;
+        --dark: #222;
+        --light: #f9f9f9;
+        --border: #ddd;
+        --radius: 4px;
+    }
+
+    /* KUNCI PERFORMA: Mencegah Lag Scroll */
+    html, body {
+        width: 100%;
+        height: 100%;
+        margin: 0; 
+        padding: 0;
+        overflow-x: hidden; /* Mencegah geser samping */
+        -webkit-font-smoothing: antialiased; /* Teks lebih tajam */
+        text-rendering: optimizeLegibility;
+        background-color: #f4f4f4;
+        font-family: 'Roboto', 'Open Sans', sans-serif;
+    }
+
+    /* Memperbaiki Box Model agar Padding tidak merusak lebar */
+    *, *:before, *:after {
+        box-sizing: border-box; 
+    }
+
+    /* =========================================
+       2. FLUID TYPOGRAPHY (TEKS MENYESUAIKAN LAYAR)
+       ========================================= */
+    h1, h2, h3, h4, h5, h6 {
+        font-family: 'Oswald', sans-serif;
+        margin-top: 0;
+        margin-bottom: 15px;
+        text-transform: uppercase;
+        font-weight: 700;
+        line-height: 1.2;
+    }
+
+    p, a, span, button, input {
+        font-size: 14px; /* Base Mobile */
+        line-height: 1.5;
+    }
+
+    /* Media Query Tipografi Bertingkat */
+    @media (min-width: 768px) { /* Tablet */
+        p, a, span, button, input { font-size: 15px; }
+        h1 { font-size: 28px; }
+    }
+    @media (min-width: 1200px) { /* Desktop */
+        p, a, span, button, input { font-size: 16px; }
+        h1 { font-size: 32px; }
+    }
+
+    /* =========================================
+       3. HEADER & NAVBAR (STABIL)
+       ========================================= */
+    .navbar-top {
+        background: var(--dark);
+        height: 60px;
+        border-bottom: 3px solid var(--primary);
+        display: flex;
+        align-items: center;
+        padding: 0 5%; /* Padding dinamis (persen) */
+        position: relative;
+        z-index: 1000;
+    }
+
+    .brand-logo {
+        font-size: 20px; 
+        font-weight: 700; 
+        color: #fff; 
+        letter-spacing: 1px;
+        display: flex; 
+        align-items: center; 
+        gap: 10px;
+        text-decoration: none;
+    }
+    .brand-logo:hover { color: #fff; text-decoration: none; }
+    .brand-logo span { color: var(--primary); }
+    .brand-logo svg { width: 24px; height: 24px; fill: var(--primary); }
+
+    /* =========================================
+       4. MAIN LAYOUT & CONTAINER
+       ========================================= */
+    .container-main {
+        width: 100%;
+        padding-right: 15px;
+        padding-left: 15px;
+        margin-right: auto;
+        margin-left: auto;
+    }
+
+    /* Breakpoints Container (Mirip Bootstrap tapi lebih luwes) */
+    @media (min-width: 576px) { .container-main { max-width: 540px; } }
+    @media (min-width: 768px) { .container-main { max-width: 720px; } }
+    @media (min-width: 992px) { .container-main { max-width: 800px; } } /* Dibatasi agar enak dibaca */
+
+    /* Hero Text Spacing */
+    .hero-text { 
+        text-align: center; 
+        margin: 30px 0 20px; 
+        padding: 0 10px;
+    }
+    .hero-text h1 { font-size: 24px; color: #333; }
+    .hero-text p { color: #777; font-size: 14px; }
+
+    /* =========================================
+       5. COMPONENT: CONTROL PANEL (KOTAK TENGAH)
+       ========================================= */
+    .control-panel {
+        background: #fff;
+        border: 1px solid var(--border);
+        border-bottom: 3px solid #ccc;
+        padding: 20px;
+        margin-bottom: 30px;
+        border-radius: var(--radius);
+        box-shadow: 0 2px 5px rgba(0,0,0,0.02); /* Shadow tipis agar ringan */
+    }
+
+    /* INPUT EMAIL UTAMA */
+    .email-wrap {
+        display: flex;
+        height: 48px;
+        border: 1px solid #bbb;
+        border-radius: var(--radius);
+        background: #fff;
+        margin-bottom: 20px;
+        transition: border-color 0.2s;
+    }
+    .email-wrap:hover { border-color: #999; }
+
+    .email-input {
+        flex: 1; /* Ambil sisa ruang */
+        border: none;
+        padding: 0 15px;
+        font-size: 16px; 
+        font-weight: 700; 
+        color: #333;
+        background: transparent;
+        width: 100%; /* Mencegah overflow */
+        min-width: 0; /* Fix flexbox bug */
+    }
+    .email-input:focus { outline: none; }
+
+    .btn-copy {
+        background: var(--primary);
+        color: #fff;
+        border: none;
+        padding: 0 20px;
+        font-weight: 700;
+        cursor: pointer;
+        border-left: 1px solid rgba(0,0,0,0.1);
+        font-size: 13px;
+    }
+    .btn-copy:hover { background: #4cae4c; }
+
+    /* TOMBOL AKSI GRID */
+    .action-btns {
+        display: flex;
+        gap: 10px;
+        width: 100%;
+    }
+    .btn-act {
+        flex: 1;
+        padding: 12px 5px; /* Padding samping kecil aman buat HP */
+        background: #f5f5f5;
+        border: 1px solid #ccc;
+        color: #555;
+        font-weight: 700;
+        font-size: 12px;
+        text-transform: uppercase;
+        border-radius: var(--radius);
+        cursor: pointer;
+        white-space: nowrap; /* Teks jangan turun baris */
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .btn-act:hover { background: #e0e0e0; color: #222; }
+    .btn-act i { margin-right: 5px; }
+
+    /* =========================================
+       6. CUSTOM AREA (MENYATU & RESPONSIVE)
+       ========================================= */
+    #customWell {
+        display: none;
+        background: var(--light);
+        border: 1px dashed #ccc;
+        padding: 15px;
+        margin-top: 20px;
+        border-radius: var(--radius);
+    }
+
+    /* Merged Input + Dropdown */
+    .merged-group {
+        display: flex;
+        position: relative;
+        width: 100%;
+        height: 44px;
+        background: #fff;
+        border: 1px solid #ccc;
+        border-radius: var(--radius);
+        z-index: 50;
+    }
+
+    .inp-user {
+        flex: 1;
+        border: none;
+        padding: 0 15px;
+        font-size: 14px;
+        border-right: 1px solid #eee;
+        outline: none;
+        min-width: 0;
+        background: transparent;
+    }
+
+    .dd-trigger {
+        width: 130px; /* Lebar dropdown fixed */
+        cursor: pointer;
+        background: #eee;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 10px;
+        font-size: 12px;
+        font-weight: 700;
+        color: #555;
+        user-select: none;
+        border-radius: 0 var(--radius) var(--radius) 0;
+    }
+    .dd-trigger:hover { background: #e5e5e5; }
+
+    /* MENU DROPDOWN (FLOATING) */
+    .dd-menu {
+        display: none;
+        position: absolute;
+        top: 105%; right: 0;
+        width: 100%; /* Menyesuaikan lebar input di layar kecil */
+        max-width: 180px;
+        background: #fff;
+        border: 1px solid #999;
+        border-radius: var(--radius);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+        z-index: 9999;
+    }
+    .dd-item {
+        padding: 10px 15px;
+        border-bottom: 1px solid #f9f9f9;
+        cursor: pointer;
+        font-size: 13px;
+    }
+    .dd-item:hover { background: #f0f0f0; color: var(--primary); }
+    .dd-item:last-child { border-bottom: none; }
+
+    .btn-save {
+        width: 100%;
+        margin-top: 15px;
+        background: var(--primary);
+        color: #fff;
+        border: none;
+        padding: 12px;
+        font-weight: 700;
+        border-radius: var(--radius);
+        cursor: pointer;
+        font-size: 14px;
+    }
+
+    /* =========================================
+       7. INBOX (PANEL)
+       ========================================= */
+    .panel-inbox {
+        background: #fff;
+        border: 1px solid #bce8f1;
+        border-radius: var(--radius);
+        margin-bottom: 30px;
+    }
+    .panel-heading-inbox {
+        background-color: #d9edf7;
+        color: #31708f;
+        padding: 12px 15px;
+        font-weight: 700;
+        border-bottom: 1px solid #bce8f1;
+        font-size: 14px;
+        display: flex; justify-content: space-between; align-items: center;
+    }
+    
+    .spinner {
+        width: 36px; height: 36px;
+        border: 3px solid #f3f3f3;
+        border-top: 3px solid var(--primary);
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+        margin: 0 auto 15px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* =========================================
+       8. FOOTER (CLEAN & RESPONSIVE)
+       ========================================= */
+    .footer {
+        background: #e9e9e9;
+        padding: 0;
+        margin-top: 40px;
+        border-top: 2px solid #ccc;
+        font-size: 13px;
+        color: #666;
+    }
+    .footer-top {
+        padding: 15px 0;
+        border-bottom: 1px solid #dcdcdc;
+        text-align: right;
+    }
+    .footer-top a {
+        color: #555; font-weight: 600; margin-left: 20px; 
+        text-decoration: none; text-transform: uppercase; font-size: 12px;
+    }
+    .footer-bottom { padding: 20px 0; display: flex; justify-content: space-between; align-items: center; }
+    
+    .socials i { font-size: 20px; color: #888; margin-left: 15px; cursor: pointer; }
+
+    /* TOOLTIP COPY (PENGGANTI ALERT) */
+    .tooltip-copy {
+    /* PERBAIKAN POSISI: */
+    position: fixed;     /* Tetap melayang */
+    bottom: 50px;        /* Jarak dari bawah layar 50px (Bukan top -35px) */
+    left: 50%;           /* Di tengah horizontal */
+    transform: translateX(-50%); /* Biar bener-bener center */
+    z-index: 9999;       /* Pastikan paling depan, gak ketutup footer/konten */
+
+    /* STYLE VISUAL (Sesuai punya lo): */
+    background: #333; 
+    color: #fff; 
+    padding: 8px 15px;   /* Gue gedein dikit paddingnya biar enak dilihat */
+    border-radius: 4px; 
+    font-size: 12px; 
+    font-weight: 700;
+    
+    /* ANIMASI (Sesuai punya lo): */
+    opacity: 0; 
+    transition: opacity 0.2s; 
+    pointer-events: none;
+}
+
+/* KELAS SHOW (Sesuai JS lo): */
+.tooltip-copy.show { 
+    opacity: 1; 
+}
+
+    /* =========================================
+       9. MEDIA QUERIES KHUSUS (MOBILE & TABLET)
+       ========================================= */
+    
+    /* Layar HP Kecil (misal iPhone SE, Galaxy Fold) */
+    @media (max-width: 360px) {
+        .btn-act { font-size: 10px; padding: 10px 2px; } /* Perkecil teks tombol */
+        .btn-act i { display: none; } /* Sembunyikan ikon di HP super kecil */
+        .dd-trigger { width: 100px; font-size: 11px; }
+    }
+
+    /* Layar HP Standar (Portrait) */
+    @media (max-width: 480px) {
+        .navbar-top { justify-content: center; } /* Logo tengah */
+        .brand-logo { font-size: 20px; }
+        
+        .hero-text h1 { font-size: 22px; }
+        .hero-text p { font-size: 13px; padding: 0 10px; }
+
+        .control-panel { padding: 15px; } /* Kurangi padding biar luas */
+        
+        /* Footer jadi tumpuk di HP */
+        .footer-top { text-align: center; }
+        .footer-top a { display: block; margin: 10px 0; margin-left: 0; }
+        .footer-bottom { flex-direction: column; text-align: center; gap: 10px; }
+    }
+    
+    
