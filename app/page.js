@@ -1,40 +1,70 @@
 'use client';
 import { useState, useEffect } from 'react';
 
-// --- FUNGSI PARSER EMAIL (Agar Rapi & Bersih) ---
+// --- FUNGSI DECODER CANGGIH (Memperbaiki Huruf Aneh & HTML Patah) ---
 const processEmailContent = (rawText) => {
   if (!rawText) return "<html><body><p>No message content.</p></body></html>";
-  let content = rawText;
   
-  // Bersihkan encoding aneh
-  content = content.replace(/=\r\n/g, '').replace(/=\n/g, '').replace(/=3D/g, '=').replace(/=20/g, ' ');
+  let content = rawText;
 
-  // Ambil bagian HTML saja
-  const htmlStart = content.search(/<!DOCTYPE|<html|<body/i);
+  // 1. Cek apakah ini Quoted-Printable? (Tandanya banyak simbol =)
+  // Kita decode dulu karakter hex-nya (misal: =E2=80=99 jadi ’)
+  try {
+    content = content
+      .replace(/=\r\n/g, '') // Hapus enter sambungan
+      .replace(/=\n/g, '')
+      .replace(/=([0-9A-F]{2})=([0-9A-F]{2})=([0-9A-F]{2})/gi, (m, h1, h2, h3) => {
+        // Decode 3-byte UTF-8 (seperti emoji atau tanda kutip miring)
+        return decodeURIComponent(`%${h1}%${h2}%${h3}`);
+      })
+      .replace(/=([0-9A-F]{2})=([0-9A-F]{2})/gi, (m, h1, h2) => {
+        // Decode 2-byte UTF-8
+        return decodeURIComponent(`%${h1}%${h2}`);
+      })
+      .replace(/=([0-9A-F]{2})/gi, (m, hex) => {
+        // Decode 1-byte ASCII standard
+        if (hex === '3D') return '=';
+        if (hex === '20') return ' ';
+        return String.fromCharCode(parseInt(hex, 16));
+      });
+  } catch (e) {
+    // Kalau error decode, biarkan original (fallback)
+    console.log("Decode error, using raw", e);
+  }
+
+  // 2. Ambil hanya bagian HTML murni
+  // (Membuang header teknis yang bikin pusing)
+  const htmlStart = content.search(/<!DOCTYPE|<html|<body|<div/i);
   if (htmlStart !== -1) {
     content = content.substring(htmlStart);
   } else {
+    // Teknik cadangan: Cari boundary text/html
     const parts = content.split('Content-Type: text/html');
     if (parts.length > 1) {
-      content = parts[1];
-      const firstTag = content.search(/</); 
-      if (firstTag !== -1) content = content.substring(firstTag);
+      let bodyPart = parts[1];
+      // Hapus header Content-Transfer-Encoding jika ada
+      bodyPart = bodyPart.replace(/Content-Transfer-Encoding:.*?\n\n/s, '');
+      const firstTag = bodyPart.search(/</);
+      if (firstTag !== -1) content = bodyPart.substring(firstTag);
     }
   }
+
+  // 3. Bersihkan sisa-sisa sampah di ujung file (Boundary footer)
   content = content.replace(/--[a-zA-Z0-9._-]+--\s*$/, '');
-  
-  // Tambahkan base target agar link terbuka di tab baru
-  const baseTag = '<base target="_blank">';
+
+  // 4. Paksa semua link buka di tab baru & perbaiki CSS yang hilang
+  const baseTag = '<base target="_blank"><style>body{margin:0;font-family:Arial,sans-serif;} img{max-width:100%;height:auto;}</style>';
   if (content.includes('<head>')) {
     content = content.replace('<head>', '<head>' + baseTag);
   } else {
     content = baseTag + content;
   }
+
   return content;
 };
 
 export default function Home() {
-  // STATE
+  // STATE DATA
   const [domains, setDomains] = useState([]);
   const [selectedDomain, setSelectedDomain] = useState('');
   const [username, setUsername] = useState('');
@@ -42,33 +72,37 @@ export default function Home() {
   const [emails, setEmails] = useState([]);
   const [loading, setLoading] = useState(false);
   
-  // STATE UI
+  // STATE TAMPILAN
   const [showCustom, setShowCustom] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
   const [copyTooltip, setCopyTooltip] = useState(false);
-  const [openedMail, setOpenedMail] = useState(null); // Untuk Popup Pesan
+  const [openedMail, setOpenedMail] = useState(null);
 
-  // --- 1. INITIALIZATION (Jalan Sekali saat Web Dibuka) ---
+  // --- 1. INITIALIZATION (Load Domain & Cek Memori HP) ---
   useEffect(() => {
-    // Ambil daftar domain dulu
     fetch('/api/email?action=domains')
       .then(res => res.json())
       .then(data => {
         if (data.domains && data.domains.length > 0) {
           setDomains(data.domains);
           
-          // CEK APAKAH ADA EMAIL TERSIMPAN DI MEMORI HP?
+          // CEK MEMORI: Apakah user pernah punya email sebelumnya?
           const savedEmail = localStorage.getItem('my_fake_email');
           
           if (savedEmail) {
-            // Kalau ada, PAKAI ITU (Jangan acak baru)
-            const [user, dom] = savedEmail.split('@');
-            setUsername(user);
-            setSelectedDomain(dom);
-            setFullEmail(savedEmail);
-            cekInboxLangsung(savedEmail); // Langsung cek inbox
+            // Restore email lama biar gak ganti-ganti
+            const parts = savedEmail.split('@');
+            if(parts.length === 2) {
+                setUsername(parts[0]);
+                setSelectedDomain(parts[1]);
+                setFullEmail(savedEmail);
+                cekInboxLangsung(savedEmail); 
+            } else {
+                setSelectedDomain(data.domains[0]);
+                acakEmail(data.domains[0]);
+            }
           } else {
-            // Kalau tidak ada, baru buat baru
+            // Buat baru kalau belum pernah pakai
             setSelectedDomain(data.domains[0]);
             acakEmail(data.domains[0]);
           }
@@ -76,40 +110,31 @@ export default function Home() {
       });
   }, []);
 
-  // --- 2. LOGIKA EMAIL ---
-  
-  // Simpan email ke memori biar gak hilang pas refresh
+  // --- 2. LOGIKA UTAMA ---
   const simpanKeMemori = (emailBaru) => {
     localStorage.setItem('my_fake_email', emailBaru);
     setFullEmail(emailBaru);
-    setEmails([]); // Reset inbox kalau ganti email
+    setEmails([]); // Bersihkan inbox saat ganti email
   };
 
   const acakEmail = (domain) => {
     const randomUser = 'user' + Math.floor(Math.random() * 99999);
     setUsername(randomUser);
     const emailBaru = `${randomUser}@${domain}`;
-    
-    // Update State & Memori
     simpanKeMemori(emailBaru);
   };
 
   const handleSimpanCustom = () => {
     if (!username) return;
     const emailBaru = `${username}@${selectedDomain}`;
-    
-    // Update State & Memori
     simpanKeMemori(emailBaru);
     setShowCustom(false);
+    cekInboxLangsung(emailBaru);
   };
 
-  // --- 3. SYSTEM INBOX ---
-
-  // Fungsi Cek Inbox (Bisa dipanggil manual atau otomatis)
   const cekInboxLangsung = async (alamatEmail) => {
     if (!alamatEmail || alamatEmail.includes('Loading')) return;
     setLoading(true);
-    
     try {
       const res = await fetch(`/api/email?action=inbox&address=${alamatEmail}`);
       const data = await res.json();
@@ -120,7 +145,7 @@ export default function Home() {
     setLoading(false);
   };
 
-  // Auto Refresh setiap 5 detik (Lebih cepat dari sebelumnya)
+  // Auto Refresh setiap 5 detik
   useEffect(() => {
     if (fullEmail && !fullEmail.includes('Loading')) {
       const interval = setInterval(() => {
@@ -130,14 +155,12 @@ export default function Home() {
     }
   }, [fullEmail]);
 
-  // --- 4. FUNGSI UI LAINNYA ---
   const handleCopy = () => {
     navigator.clipboard.writeText(fullEmail);
     setCopyTooltip(true);
     setTimeout(() => setCopyTooltip(false), 2000);
   };
 
-  // --- RENDER HTML (SESUAI DESAIN KAMU) ---
   return (
     <div className="container-main">
         
@@ -147,8 +170,7 @@ export default function Home() {
       </div>
 
       <div className="control-panel">
-        
-        {/* BOX EMAIL UTAMA */}
+        {/* BOX EMAIL */}
         <div className="email-wrap">
           <input type="text" className="email-input" value={fullEmail} readOnly />
           <div className={`tooltip-copy ${copyTooltip ? 'show' : ''}`}>Disalin!</div>
@@ -160,16 +182,13 @@ export default function Home() {
         {/* TOMBOL AKSI */}
         <div className="action-btns">
           <button className="btn-act" onClick={() => setShowCustom(!showCustom)}><i className="fa fa-pencil"></i> UBAH</button>
-          
-          {/* Tombol Acak (Akan generate baru & simpan memori) */}
           <button className="btn-act" onClick={() => acakEmail(selectedDomain)}><i className="fa fa-random"></i> ACAK</button>
-          
           <button className="btn-act" onClick={() => cekInboxLangsung(fullEmail)}>
             <i className={`fa fa-refresh ${loading ? 'fa-spin' : ''}`}></i> REFRESH
           </button>
         </div>
 
-        {/* MENU CUSTOM EDIT */}
+        {/* MENU EDIT CUSTOM */}
         {showCustom && (
           <div id="customWell" style={{display: 'block'}}>
             <label style={{fontSize:'11px', fontWeight:'700', color:'#888', marginBottom:'5px', display:'block'}}>BUAT EMAIL BARU</label>
@@ -191,29 +210,22 @@ export default function Home() {
         )}
       </div>
 
-      {/* PANEL INBOX */}
+      {/* INBOX LIST */}
       <div className="panel panel-info panel-inbox">
         <div className="panel-heading-inbox">
           <i className="fa fa-inbox"></i> KOTAK MASUK 
-          
-          {/* COUNTER PESAN (Ganti 'Live' jadi Jumlah Pesan) */}
           {emails.length > 0 ? (
             <span className="pull-right label label-danger" style={{top:'2px', position:'relative', fontSize:'11px'}}>
-              {emails.length} Pesan Baru
+              {emails.length} Pesan
             </span>
           ) : (
             <span className="pull-right label label-success" style={{top:'2px', position:'relative'}}>Live</span>
           )}
         </div>
         
-        <div className="panel-body" style={{minHeight:'250px', padding:0, position:'relative'}}>
+        <div className="panel-body" style={{minHeight:'250px', padding:0}}>
+          {loading && emails.length === 0 && <div className="text-center" style={{paddingTop:'60px'}}><div className="spinner"></div></div>}
           
-          {/* LOADING */}
-          {loading && emails.length === 0 && (
-             <div className="text-center" style={{paddingTop:'60px'}}><div className="spinner"></div></div>
-          )}
-
-          {/* KOSONG */}
           {!loading && emails.length === 0 && (
             <div className="text-center" style={{paddingTop:'60px'}}>
               <div className="spinner"></div>
@@ -222,34 +234,20 @@ export default function Home() {
             </div>
           )}
 
-          {/* LIST EMAIL (TAMPILAN RAPI SEPERTI GMAIL) */}
           {emails.length > 0 && (
             <div className="list-group">
               {emails.map((mail, i) => (
                 <div 
                   key={i} 
                   className="list-group-item" 
-                  onClick={() => setOpenedMail(mail)} // KLIK UNTUK BACA
-                  style={{
-                    cursor: 'pointer', 
-                    borderLeft: '4px solid #007bff', 
-                    marginBottom:'1px',
-                    backgroundColor: '#fff',
-                    transition: 'background 0.2s'
-                  }}
-                  onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#f9f9f9'}
-                  onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#fff'}
+                  onClick={() => setOpenedMail(mail)} 
+                  style={{cursor: 'pointer', borderLeft: '4px solid #007bff', marginBottom:'1px', background:'#fff'}}
                 >
-                  <div style={{fontWeight:'bold', color:'#333', fontSize:'14px', marginBottom:'4px'}}>
-                    {mail.sender} 
-                    <small className="pull-right text-muted" style={{fontWeight:'normal', fontSize:'11px'}}>
-                        {new Date(mail.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
-                    </small>
+                  <div style={{fontWeight:'bold', color:'#333', fontSize:'14px', marginBottom:'3px'}}>
+                    {mail.sender} <small className="pull-right text-muted" style={{fontWeight:'normal', fontSize:'11px'}}>{new Date(mail.created_at).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}</small>
                   </div>
                   <div style={{color:'#007bff', fontWeight:'600', fontSize:'13px'}}>{mail.subject}</div>
-                  <div style={{fontSize:'12px', color:'#777', overflow:'hidden', whiteSpace:'nowrap', textOverflow:'ellipsis', marginTop:'2px'}}>
-                     Klik untuk membaca pesan selengkapnya...
-                  </div>
+                  <div style={{fontSize:'12px', color:'#777', marginTop:'3px'}}>Klik untuk membaca...</div>
                 </div>
               ))}
             </div>
@@ -257,56 +255,37 @@ export default function Home() {
         </div>
       </div>
 
-      {/* --- POPUP / MODAL UNTUK BACA EMAIL (FULLSCREEN MOBILE FRIENDLY) --- */}
+      {/* MODAL POPUP (FULL SCREEN DI HP) */}
       {openedMail && (
         <div style={{
           position: 'fixed', top:0, left:0, width:'100%', height:'100%', 
-          backgroundColor: 'rgba(0,0,0,0.6)', zIndex: 99999, 
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          padding: '10px'
+          backgroundColor: 'rgba(0,0,0,0.8)', zIndex: 99999, 
+          display: 'flex', alignItems: 'center', justifyContent: 'center', padding:'10px'
         }}>
           <div style={{
-            backgroundColor: '#fff', width: '100%', maxWidth: '700px', height: '90%', 
-            borderRadius: '8px', overflow: 'hidden', display: 'flex', flexDirection: 'column',
-            boxShadow: '0 10px 25px rgba(0,0,0,0.5)'
+            backgroundColor: '#fff', width: '100%', maxWidth: '700px', height: '95%', 
+            borderRadius: '8px', overflow: 'hidden', display: 'flex', flexDirection: 'column'
           }}>
             {/* Header Popup */}
-            <div style={{
-                padding: '15px', borderBottom: '1px solid #eee', 
-                background:'#f8f9fa', display:'flex', justifyContent:'space-between', alignItems:'center'
-            }}>
-              <div style={{overflow:'hidden'}}>
-                <h4 style={{margin:'0 0 5px 0', color:'#333', fontSize:'16px', fontWeight:'bold', whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis'}}>
-                    {openedMail.subject}
-                </h4>
-                <small style={{color:'#666', display:'block'}}>From: {openedMail.sender}</small>
-              </div>
-              <button 
-                onClick={() => setOpenedMail(null)} 
-                style={{
-                    background:'#ff4d4d', color:'#fff', border:'none', 
-                    width:'30px', height:'30px', borderRadius:'50%', 
-                    fontSize:'18px', cursor:'pointer', flexShrink:0, marginLeft:'10px'
-                }}>
-                &times;
-              </button>
+            <div style={{padding: '15px', borderBottom: '1px solid #eee', background:'#f5f5f5', display:'flex', justifyContent:'space-between', alignItems:'center'}}>
+              <h4 style={{margin:0, fontSize:'16px', fontWeight:'bold', color:'#333', overflow:'hidden', whiteSpace:'nowrap', textOverflow:'ellipsis', maxWidth:'80%'}}>
+                  {openedMail.subject}
+              </h4>
+              <button onClick={() => setOpenedMail(null)} style={{background:'red', color:'white', border:'none', width:'30px', height:'30px', borderRadius:'50%', cursor:'pointer', fontWeight:'bold'}}>X</button>
             </div>
             
-            {/* Isi Email (IFRAME AGAR RAPI & TIDAK BOCOR CSS) */}
-            <div style={{flex: 1, position: 'relative', backgroundColor:'#fff'}}>
+            {/* ISI EMAIL (IFRAME) */}
+            <div style={{flex: 1, position: 'relative', background:'#fff'}}>
               <iframe 
                 srcDoc={processEmailContent(openedMail.message)} 
-                style={{width: '100%', height: '100%', border: 'none', display:'block'}} 
+                style={{width: '100%', height: '100%', border: 'none'}} 
                 title="Email Content"
                 sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin"
               />
             </div>
             
-            {/* Footer Popup */}
-            <div style={{padding: '10px', textAlign: 'right', borderTop: '1px solid #eee', background:'#fff'}}>
-              <button className="btn-act" onClick={() => setOpenedMail(null)} style={{width:'auto', padding:'8px 20px', background:'#eee', color:'#333'}}>
-                Tutup Pesan
-              </button>
+            <div style={{padding: '10px', textAlign: 'center', borderTop: '1px solid #eee', background:'#f5f5f5'}}>
+              <button className="btn-act" onClick={() => setOpenedMail(null)} style={{width:'100%', maxWidth:'200px'}}>TUTUP PESAN</button>
             </div>
           </div>
         </div>
