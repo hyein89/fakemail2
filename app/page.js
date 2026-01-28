@@ -145,8 +145,8 @@ export default function Home() {
         </div>
 
         <div className="action-btns">
-          <button className="btn-act" onClick={() => setShowCustom(!showCustom)}><i className="fa fa-pencil"></i> UBAH</button>
-          <button className="btn-act" onClick={() => acakEmail(selectedDomain)}><i className="fa fa-random"></i> ACAK</button>
+          <button className="btn-act" onClick={() => setShowCustom(!showCustom)}><i className="fa fa-pencil"></i> CUSTOM</button>
+          <button className="btn-act" onClick={() => acakEmail(selectedDomain)}><i className="fa fa-random"></i> RANDOM</button>
           <button className="btn-act" onClick={() => cekInboxLangsung(fullEmail)}>
             <i className={`fa fa-refresh ${loading ? 'fa-spin' : ''}`}></i> REFRESH
           </button>
@@ -154,7 +154,7 @@ export default function Home() {
 
         {showCustom && (
           <div id="customWell" style={{display: 'block'}}>
-            <label style={{fontSize:'11px', fontWeight:'700', color:'#888', marginBottom:'5px', display:'block'}}>BUAT EMAIL BARU</label>
+            <label style={{fontSize:'11px', fontWeight:'700', color:'#888', marginBottom:'5px', display:'block'}}>CREATE NEW EMAIL</label>
             <div className="merged-group">
               <input type="text" className="inp-user" placeholder="Nama user" value={username} onChange={(e) => setUsername(e.target.value)} />
               <div className="dd-trigger" onClick={() => setShowDropdown(!showDropdown)}>
@@ -168,7 +168,7 @@ export default function Home() {
                 </div>
               )}
             </div>
-            <button className="btn-save" onClick={handleSimpanCustom}>SIMPAN PERUBAHAN</button>
+            <button className="btn-save" onClick={handleSimpanCustom}>SAVE CHANGES</button>
           </div>
         )}
       </div>
@@ -176,13 +176,13 @@ export default function Home() {
       {/* --- INBOX LIST (DESAIN BARU) --- */}
       <div className="panel panel-info panel-inbox">
         <div className="panel-heading-inbox">
-          <i className="fa fa-inbox"></i> KOTAK MASUK 
+          <i className="fa fa-inbox"></i> INBOX
           {emails.length > 0 ? (
             <span className="pull-right label label-danger" style={{top:'2px', position:'relative', fontSize:'11px'}}>
-              {emails.length} Pesan
+              {emails.length}
             </span>
           ) : (
-            <span className="pull-right label label-success" style={{top:'2px', position:'relative'}}>Live</span>
+            <span className="pull-right label label-success" style={{top:'2px', position:'relative'}}>0</span>
           )}
         </div>
         
@@ -193,8 +193,8 @@ export default function Home() {
           {!loading && emails.length === 0 && (
             <div className="text-center" style={{paddingTop:'60px'}}>
               <div className="spinner"></div>
-              <h4 style={{color:'#555'}}>Inbox Kosong</h4>
-              <p className="text-muted">Menunggu pesan masuk...</p>
+              <h4 style={{color:'#555'}}>Inbox is empty</h4>
+              <p className="text-muted">Waiting for incoming messages....</p>
             </div>
           )}
 
@@ -364,7 +364,7 @@ export default function Home() {
             
             <div style={{padding: '12px', textAlign: 'center', borderTop: '1px solid #eee', background:'#fff'}}>
               <button className="btn-act" onClick={() => setOpenedMail(null)} style={{width:'100%', maxWidth:'200px', background:'#f1f1f1', color:'#333', border:'1px solid #ddd'}}>
-                Tutup Pesan
+                Close Message
               </button>
             </div>
           </div>
