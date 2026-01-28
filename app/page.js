@@ -267,10 +267,7 @@ export default function Home() {
                 </div>
               ))}
             </div>
-          )}
-        </div>
-      </div>
-
+          
 
       {/* --- AREA ARTIKEL SEO (MULAI) --- */}
       <div className="article-plain" style={{ marginTop: '50px', marginBottom: '50px' }}>
@@ -327,6 +324,9 @@ export default function Home() {
       </div>
       {/* --- AREA ARTIKEL SEO (SELESAI) --- */}
 
+)}
+        </div>
+      </div>
 
 
       {/* POPUP FULLSCREEN */}
