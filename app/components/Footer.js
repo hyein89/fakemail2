@@ -10,7 +10,7 @@ export default function Footer() {
         </div>
         <div className="footer-bottom clearfix">
           <div className="copyright">
-            Copyright Moaktmail Service<br/>
+            Copyright {CONFIG.siteName} Service<br/>
             <small>www.{CONFIG.dom}</small>
           </div>
           <div className="socials">
