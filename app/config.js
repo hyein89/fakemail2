@@ -1,17 +1,30 @@
-// --- PUSAT PENGATURAN ---
-// Ganti-ganti data di sini saja, otomatis semua berubah.
+// app/config.js
 
 export const CONFIG = {
-  // 1. PENGATURAN SEO (Tampilan di Google/WA)
-  siteName: "FakeMail Pro", 
-  domainUrl: "https://suaranesianew.eu.org", // Domain utama website kamu
-  description: "Layanan email sementara gratis, aman, dan instan.",
+  // --- IDENTITAS SITUS ---
+  siteName: "FakeMail Pro",
+  domainUrl: "https://suaranesianew.eu.org", 
+  description: "Free temporary email service. Get a disposable email address instantly to protect your privacy and avoid spam. Fast, secure, and anonymous.",
+  
+  // --- KEYWORDS (Penting buat Google) ---
+  keywords: [
+    "temp mail", 
+    "disposable email", 
+    "10 minute mail", 
+    "fake email generator", 
+    "anonymous email", 
+    "trash mail", 
+    "throwaway email", 
+    "receive sms online"
+  ],
 
-  // 2. DAFTAR DOMAIN EMAIL (Yang bisa dipakai user)
-  // Mau nambah domain? Tinggal tulis di bawah sini pake koma
+  // --- GAMBAR SHARE (WA/FB/Twitter) ---
+  // Pastikan kamu upload gambar bernama 'og-image.jpg' ke folder 'public'
+  ogImage: "/og-image.jpg", 
+  
+  // --- DAFTAR DOMAIN EMAIL ---
   allowedDomains: [
     "suaranesianew.eu.org", 
-    "contoh-baru.com",
-    "domain-lain.xyz"
+    "contoh-lain.com"
   ],
 };
