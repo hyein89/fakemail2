@@ -25,7 +25,7 @@ export const CONFIG = {
   
   // --- DAFTAR DOMAIN EMAIL ---
   allowedDomains: [
-    "suaranesianew.eu.org", 
-    "contoh-lain.com"
+    "sucltid.eu.org",
+    "suaranesianew.eu.org"
   ],
 };
