@@ -26,6 +26,7 @@ export const CONFIG = {
   // --- DAFTAR DOMAIN EMAIL ---
   allowedDomains: [
     "sucltid.eu.org",
+    "tzuyuphxcy.eu.org",
     "suaranesianew.eu.org"
   ],
 };
