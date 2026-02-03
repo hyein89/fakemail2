@@ -88,6 +88,15 @@ export default function RootLayout({ children }) {
         </Script>
         {/* --- GOOGLE ANALYTICS (End) --- */}
 
+// Di dalam return statement JSX
+<script 
+  async 
+  src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6506882590221776"
+  crossOrigin="anonymous" // Perhatikan huruf 'O' besar
+></script>
+
+
+
         <Header />
         
         <main style={{ minHeight: '80vh' }}>
